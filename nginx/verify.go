@@ -16,7 +16,7 @@ func Verify() error {
 	// Make sure that nginx application is installed
 	_, err := exec.Command("nginx", "-v").Output()
 	if err != nil {
-		return fmt.Errorf("Nginx is not installed: %v", err)
+		return fmt.Errorf("Nginx is not installed, please install nginx first: %v", err)
 	}
 
 	return nil

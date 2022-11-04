@@ -22,22 +22,16 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-	"runtime"
-
 	"github.com/spf13/cobra"
 )
 
-// versionCmd represents the version command
-var versionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Nginx Controller version",
-	Long:  `Show current release version of nginxctl`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("nginxctl v1.0.0 %s/%s\n", runtime.GOOS, runtime.GOARCH)
-	},
+// vhostCmd represents the vhost command
+var vhostCmd = &cobra.Command{
+	Use:   "vhost",
+	Short: "Nginx virtualhost configuration",
+	Long:  `Add, remove, update, or get list of virtualhost configurations`,
 }
 
 func init() {
-	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(vhostCmd)
 }

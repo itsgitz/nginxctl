@@ -36,11 +36,8 @@ var cfgFile string
 var rootCmd = &cobra.Command{
 	Use:   "nginxctl",
 	Short: "Nginx configuration controller",
-	Long: `With nginx configuration controller, currently you can only
-create, update, delete, or get list of virtual host configurations`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) {},
+	Long: `Manage and control nginx configurations.
+Note: This application currently can only manage virtualhost configurations`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
