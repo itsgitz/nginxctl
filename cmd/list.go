@@ -32,8 +32,8 @@ import (
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Get virtualhost configurations",
-	Long: `Get all nginx virtualhost configurations
-either from "/etc/nginx/sites-available" or "/etc/nginx/conf.d" directory`,
+	Long: `Get all nginx virtualhost configurations from "/etc/nginx/sites-available",
+"/etc/nginx/sites-enabled" (for enabled vhost), and "/etc/nginx/conf.d" directory`,
 	Run: func(cmd *cobra.Command, args []string) {
 		vhosts, err := nginx.GetAllVHosts()
 		if err != nil {
@@ -43,10 +43,11 @@ either from "/etc/nginx/sites-available" or "/etc/nginx/conf.d" directory`,
 
 		sitesAvailableNum := len(vhosts[nginx.SitesAvailableDir])
 		confdNum := len(vhosts[nginx.ConfdDir])
+		sitesEnabledNum := len(vhosts[nginx.SitesEnabledDir])
 
 		// Show configurations on /etc/nginx/sites-available
 		if sitesAvailableNum > 0 {
-			fmt.Printf("Virtualhost configurations on %s (total %d):\n\n",
+			fmt.Printf("\nVirtualhost configurations on %s (total %d):\n\n",
 				nginx.SitesAvailableDirPath,
 				sitesAvailableNum,
 			)
@@ -57,11 +58,22 @@ either from "/etc/nginx/sites-available" or "/etc/nginx/conf.d" directory`,
 
 		// Show configurations on /etc/nginx/conf.d
 		if confdNum > 0 {
-			fmt.Printf("Virtualhost configurations on %s (total %d):\n\n",
+			fmt.Printf("\nVirtualhost configurations on %s (total %d):\n\n",
 				nginx.ConfdDirPath,
 				confdNum,
 			)
 			for _, v := range vhosts[nginx.ConfdDir] {
+				fmt.Println("*", v)
+			}
+		}
+
+		// Show configurations on /etc/nginx/sites-enabled
+		if sitesEnabledNum > 0 {
+			fmt.Printf("\nEnabled virtualhost configurations on %s (total %d):\n\n",
+				nginx.SitesEnabledDirPath,
+				sitesEnabledNum,
+			)
+			for _, v := range vhosts[nginx.SitesEnabledDir] {
 				fmt.Println("*", v)
 			}
 		}
@@ -75,9 +87,9 @@ func init() {
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
+	//listCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	//listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
