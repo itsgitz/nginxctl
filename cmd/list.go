@@ -22,7 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
+	"nginxctl/caller/vhost"
 	"nginxctl/nginx"
 
 	"github.com/spf13/cobra"
@@ -35,61 +35,43 @@ var listCmd = &cobra.Command{
 	Long: `Get all nginx virtualhost configurations from "/etc/nginx/sites-available",
 "/etc/nginx/sites-enabled" (for enabled vhost), and "/etc/nginx/conf.d" directory`,
 	Run: func(cmd *cobra.Command, args []string) {
-		vhosts, err := nginx.GetAllVHosts()
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+		onlyArgs := make(map[string]bool, 3)
+		onlyArgs[nginx.SitesAvailableDir] = OnlySitesAvailable
+		onlyArgs[nginx.SitesEnabledDir] = OnlySitesEnabled
+		onlyArgs[nginx.ConfdDir] = OnlyConfd
 
-		sitesAvailableNum := len(vhosts[nginx.SitesAvailableDir])
-		confdNum := len(vhosts[nginx.ConfdDir])
-		sitesEnabledNum := len(vhosts[nginx.SitesEnabledDir])
-
-		// Show configurations on /etc/nginx/sites-available
-		if sitesAvailableNum > 0 {
-			fmt.Printf("\nVirtualhost configurations on %s (total %d):\n\n",
-				nginx.SitesAvailableDirPath,
-				sitesAvailableNum,
-			)
-			for _, v := range vhosts[nginx.SitesAvailableDir] {
-				fmt.Println("*", v)
-			}
-		}
-
-		// Show configurations on /etc/nginx/conf.d
-		if confdNum > 0 {
-			fmt.Printf("\nVirtualhost configurations on %s (total %d):\n\n",
-				nginx.ConfdDirPath,
-				confdNum,
-			)
-			for _, v := range vhosts[nginx.ConfdDir] {
-				fmt.Println("*", v)
-			}
-		}
-
-		// Show configurations on /etc/nginx/sites-enabled
-		if sitesEnabledNum > 0 {
-			fmt.Printf("\nEnabled virtualhost configurations on %s (total %d):\n\n",
-				nginx.SitesEnabledDirPath,
-				sitesEnabledNum,
-			)
-			for _, v := range vhosts[nginx.SitesEnabledDir] {
-				fmt.Println("*", v)
-			}
-		}
+		vhost.List(onlyArgs)
 	},
 }
+
+var OnlySitesAvailable bool
+var OnlySitesEnabled bool
+var OnlyConfd bool
 
 func init() {
 	vhostCmd.AddCommand(listCmd)
 
-	// Here you will define your flags and configuration settings.
+	// --sites-available
+	listCmd.Flags().BoolVar(
+		&OnlySitesAvailable,
+		"sites-available",
+		false,
+		"Only show configurations on /etc/nginx/sites-available",
+	)
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	//listCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// --sites-enabled
+	listCmd.Flags().BoolVar(
+		&OnlySitesEnabled,
+		"sites-enabled",
+		false,
+		"Only show configurations on /etc/nginx/sites-enabled",
+	)
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	//listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// --confd
+	listCmd.Flags().BoolVar(
+		&OnlyConfd,
+		"confd",
+		false,
+		"Only show configurations on /etc/nginx/conf.d",
+	)
 }
