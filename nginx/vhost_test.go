@@ -4,10 +4,21 @@ import "testing"
 
 func TestDirIsEmpty(t *testing.T) {
 	var expected bool = false
-	exist, _ := isDir("/whatever")
+	exist, _ := isDir(SitesAvailableDirPath)
 
 	if exist != expected {
-		t.Log("The non-existing directory should be", expected)
+		t.Log("The directory should be empty")
+		t.Fail()
+	}
+}
+
+func TestGetFilesEmpty(t *testing.T) {
+	var expected []string
+
+	files, _ := getFiles(SitesAvailableDirPath)
+
+	if len(expected) != len(files) {
+		t.Log("The files should be don't exist")
 		t.Fail()
 	}
 }
