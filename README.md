@@ -5,6 +5,7 @@ Easily manage or control nginx configurations with minimal effort. This project 
 1. Get all virtualhost on machine
 2. Add a new virtualhost configuration
 3. Delete a virtualhost
+4. Enable or disable a virtualhost
 
 ## Usage
 Soon ...
