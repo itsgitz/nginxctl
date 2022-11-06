@@ -10,6 +10,8 @@ const (
 
 	StaticSite   string = "static_site"
 	ReverseProxy string = "reverse_proxy"
+
+	TestEmptyFile string = "/empty"
 )
 
 var (

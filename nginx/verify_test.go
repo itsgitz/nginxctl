@@ -7,7 +7,7 @@ func TestVerify(t *testing.T) {
 
 	verify := Verify()
 	if verify == want {
-		t.Log("Error should be not nil")
+		t.Log("Error should be nil")
 		t.Fail()
 	}
 }
