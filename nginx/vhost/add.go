@@ -93,13 +93,5 @@ func (v *vhostConfig) write(config []byte) {
 		helper.ShowError(err)
 	}
 	fmt.Println(link)
-
-	// Test nginx configuration with nginx -t command
-	fmt.Println("Test nginx configuration")
-	test, err := nginx.NginxTestConfiguration()
-	if err != nil {
-		helper.ShowError(err)
-	}
-	fmt.Println(test)
 	fmt.Println("Successfully added configuration!")
 }
