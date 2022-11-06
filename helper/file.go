@@ -51,3 +51,11 @@ func WriteLink(src, dst string) (string, error) {
 	}
 	return string(ln), err
 }
+
+func DeleteFile(path string) error {
+	err := os.Remove(path)
+	if err != nil {
+		return err
+	}
+	return nil
+}

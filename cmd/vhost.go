@@ -25,6 +25,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Make it global variable because all command file will use these variables
+var (
+	serverName string
+	siteType   string
+	listen     int64
+
+	// root, document root for static website
+	root string
+
+	// proxyPass, for proxy_pass address
+	proxyPass string
+)
+
 // vhostCmd represents the vhost command
 var vhostCmd = &cobra.Command{
 	Use:   "vhost",

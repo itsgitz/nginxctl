@@ -45,18 +45,6 @@ for static website and reverse proxy`,
 	},
 }
 
-var (
-	serverName string
-	siteType   string
-	listen     int64
-
-	// root, document root for static website
-	root string
-
-	// proxyPass, for proxy_pass address
-	proxyPass string
-)
-
 func init() {
 	vhostCmd.AddCommand(addCmd)
 
