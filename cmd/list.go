@@ -17,13 +17,14 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
+THE SOFTWARE. */
 package cmd
 
 import (
-	"nginxctl/caller/vhost"
+	"fmt"
+	"nginxctl/helper"
 	"nginxctl/nginx"
+	"nginxctl/nginx/vhost"
 
 	"github.com/spf13/cobra"
 )
@@ -35,25 +36,32 @@ var listCmd = &cobra.Command{
 	Long: `Get all nginx virtualhost configurations from "/etc/nginx/sites-available",
 "/etc/nginx/sites-enabled" (for enabled vhost), and "/etc/nginx/conf.d" directory`,
 	Run: func(cmd *cobra.Command, args []string) {
-		onlyArgs := make(map[string]bool, 3)
-		onlyArgs[nginx.SitesAvailableDir] = OnlySitesAvailable
-		onlyArgs[nginx.SitesEnabledDir] = OnlySitesEnabled
-		onlyArgs[nginx.ConfdDir] = OnlyConfd
-
-		vhost.List(onlyArgs)
+		specific := &specificArgument{}
+		specific.sitesAvailable = onlySitesAvailable
+		specific.sitesEnabled = onlySitesEnabled
+		specific.confd = onlyConfd
+		list(specific)
 	},
 }
 
-var OnlySitesAvailable bool
-var OnlySitesEnabled bool
-var OnlyConfd bool
+type specificArgument struct {
+	sitesAvailable bool
+	sitesEnabled   bool
+	confd          bool
+}
+
+var (
+	onlySitesAvailable bool
+	onlySitesEnabled   bool
+	onlyConfd          bool
+)
 
 func init() {
 	vhostCmd.AddCommand(listCmd)
 
 	// --sites-available
 	listCmd.Flags().BoolVar(
-		&OnlySitesAvailable,
+		&onlySitesAvailable,
 		"sites-available",
 		false,
 		"Only show configurations on /etc/nginx/sites-available",
@@ -61,7 +69,7 @@ func init() {
 
 	// --sites-enabled
 	listCmd.Flags().BoolVar(
-		&OnlySitesEnabled,
+		&onlySitesEnabled,
 		"sites-enabled",
 		false,
 		"Only show configurations on /etc/nginx/sites-enabled",
@@ -69,9 +77,47 @@ func init() {
 
 	// --confd
 	listCmd.Flags().BoolVar(
-		&OnlyConfd,
+		&onlyConfd,
 		"confd",
 		false,
 		"Only show configurations on /etc/nginx/conf.d",
 	)
+}
+
+func list(specific *specificArgument) {
+	vhosts, err := vhost.GetAllVHosts()
+	if err != nil {
+		helper.ShowError(err)
+	}
+
+	if specific.sitesAvailable {
+		// Only --sites-available
+		show(vhosts[nginx.SitesAvailableDir], nginx.SitesAvailableDirPath)
+	} else if specific.sitesEnabled {
+		// Only --sites-enabled
+		show(vhosts[nginx.SitesEnabledDir], nginx.SitesEnabledDirPath)
+	} else if specific.confd {
+		// Only --confd
+		show(vhosts[nginx.ConfdDir], nginx.ConfdDirPath)
+	} else {
+		// All, means no argument specified
+		show(vhosts[nginx.SitesAvailableDir], nginx.SitesAvailableDirPath)
+		show(vhosts[nginx.SitesEnabledDir], nginx.SitesEnabledDirPath)
+		show(vhosts[nginx.ConfdDir], nginx.ConfdDirPath)
+	}
+}
+
+func show(vhosts []string, path string) {
+	num := len(vhosts)
+	fmt.Printf("Configurations on %s (total %d):\n", path, num)
+	if num == 0 {
+		fmt.Printf("* No config file\n\n")
+		return
+	}
+
+	for _, v := range vhosts {
+		fmt.Println("*", v)
+	}
+	fmt.Println()
+	return
 }

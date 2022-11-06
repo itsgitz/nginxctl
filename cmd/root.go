@@ -23,6 +23,7 @@ package cmd
 
 import (
 	"fmt"
+	"nginxctl/helper"
 	"nginxctl/nginx"
 	"os"
 
@@ -45,8 +46,7 @@ Note: This application currently can only manage virtualhost configurations`,
 func Execute() {
 	// Verifying the nginx application
 	if err := nginx.Verify(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		helper.ShowError(err)
 	}
 
 	err := rootCmd.Execute()

@@ -22,7 +22,8 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
+	"nginxctl/nginx/configuration"
+	"nginxctl/nginx/vhost"
 
 	"github.com/spf13/cobra"
 )
@@ -32,22 +33,56 @@ var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add a virtualhost configuration",
 	Long: `Currently only support adding configuration
-for static website or reverse proxy`,
+for static website and reverse proxy`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Add vhost ...")
+		conf := &configuration.Configuration{}
+		conf.ServerName = serverName
+		conf.Type = siteType
+		conf.Listen = listen
+		conf.Root = root
+		conf.ProxyPass = proxyPass
+		vhost.AddVHost(conf)
 	},
 }
+
+var (
+	serverName string
+	siteType   string
+	listen     int64
+
+	// root, document root for static website
+	root string
+
+	// proxyPass, for proxy_pass address
+	proxyPass string
+)
 
 func init() {
 	vhostCmd.AddCommand(addCmd)
 
-	// Here you will define your flags and configuration settings.
+	// --server-name
+	addCmd.Flags().StringVar(&serverName, "server-name", "", "Define the server_name")
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// addCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// --type
+	addCmd.Flags().StringVar(
+		&siteType,
+		"type",
+		"",
+		`Define the vhost type, the value can be "static_site" and "reverse_proxy"`,
+	)
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// addCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// --root (document root)
+	addCmd.Flags().StringVar(&root, "root", "", "Define the document root directory")
+
+	// --proxy-address (proxy_pass address)
+	addCmd.Flags().StringVar(&proxyPass, "proxy-pass", "", "Define the proxy_pass address")
+
+	// --listen port
+	addCmd.Flags().Int64Var(&listen, "listen", 80, "Define the listen port")
+
+	// all flags are required
+	addCmd.MarkFlagRequired("server-name")
+	addCmd.MarkFlagRequired("type")
+	addCmd.MarkFlagsRequiredTogether("server-name", "type")
+	addCmd.MarkFlagsMutuallyExclusive("root", "proxy-pass")
 }

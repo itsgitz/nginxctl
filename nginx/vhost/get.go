@@ -1,27 +1,26 @@
 package vhost
 
 import (
-	"io/ioutil"
+	"nginxctl/helper"
 	"nginxctl/nginx"
-	"os"
 )
 
 // GetAllVHosts get all nginx virtual host configurations on the current machine
 func GetAllVHosts() (map[string][]string, error) {
 	// Check if `sites-available` directory is exists
-	isAvailableDir, _ := isDir(nginx.SitesAvailableDirPath)
+	isAvailableDir, _ := helper.IsFileExist(nginx.SitesAvailableDirPath)
 
 	// Check if `conf.d` directory is exists
-	isConfdDir, _ := isDir(nginx.ConfdDirPath)
+	isConfdDir, _ := helper.IsFileExist(nginx.ConfdDirPath)
 
 	// Check if `sites-enabled` directory is exists
-	isEnabledDir, _ := isDir(nginx.SitesEnabledDirPath)
+	isEnabledDir, _ := helper.IsFileExist(nginx.SitesEnabledDirPath)
 
 	vhosts := make(map[string][]string, 3)
 
 	// List for vhosts in `sites-available` directory
 	if isAvailableDir {
-		files, err := getFiles(nginx.SitesAvailableDirPath)
+		files, err := helper.GetFiles(nginx.SitesAvailableDirPath)
 		if err != nil {
 			return nil, err
 		}
@@ -30,7 +29,7 @@ func GetAllVHosts() (map[string][]string, error) {
 
 	// List for vhosts in `conf.d` directory
 	if isConfdDir {
-		files, err := getFiles(nginx.ConfdDirPath)
+		files, err := helper.GetFiles(nginx.ConfdDirPath)
 		if err != nil {
 			return nil, err
 		}
@@ -39,7 +38,7 @@ func GetAllVHosts() (map[string][]string, error) {
 
 	// List for vhosts in `sites-enabled` directory
 	if isEnabledDir {
-		files, err := getFiles(nginx.SitesEnabledDirPath)
+		files, err := helper.GetFiles(nginx.SitesEnabledDirPath)
 		if err != nil {
 			return nil, err
 		}
@@ -47,27 +46,4 @@ func GetAllVHosts() (map[string][]string, error) {
 	}
 
 	return vhosts, nil
-}
-
-// isDir will check if the directory is exists
-func isDir(path string) (bool, error) {
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return false, err
-	}
-	return true, nil
-}
-
-// getFiles get filenames as slice
-func getFiles(path string) ([]string, error) {
-	files, err := ioutil.ReadDir(path)
-	if err != nil {
-		return nil, err
-	}
-
-	var list []string
-	for _, f := range files {
-		list = append(list, f.Name())
-	}
-
-	return list, nil
 }

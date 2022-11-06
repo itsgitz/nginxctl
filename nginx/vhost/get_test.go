@@ -1,35 +1,36 @@
 package vhost
 
 import (
+	"nginxctl/helper"
 	"nginxctl/nginx"
 	"testing"
 )
 
 func TestDirIsEmpty(t *testing.T) {
-	var expected bool = false
-	exist, _ := isDir(nginx.SitesAvailableDirPath)
+	var want bool = false
+	exist, _ := helper.IsFileExist(nginx.SitesAvailableDirPath)
 
-	if exist != expected {
+	if exist != want {
 		t.Log("The directory should be empty")
 		t.Fail()
 	}
 }
 
 func TestGetFilesEmpty(t *testing.T) {
-	var expected []string
+	var want []string
 
-	files, _ := getFiles(nginx.SitesAvailableDirPath)
+	files, _ := helper.GetFiles(nginx.SitesAvailableDirPath)
 
-	if len(expected) != len(files) {
+	if len(want) != len(files) {
 		t.Log("The files should be don't exist")
 		t.Fail()
 	}
 }
 
 func TestVHostEmpty(t *testing.T) {
-	expected := make(map[string][]string, 2)
-	expected[nginx.SitesAvailableDir] = []string{}
-	expected[nginx.ConfdDir] = []string{}
+	want := make(map[string][]string, 2)
+	want[nginx.SitesAvailableDir] = []string{}
+	want[nginx.ConfdDir] = []string{}
 
 	vhosts, _ := GetAllVHosts()
 

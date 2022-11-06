@@ -3,10 +3,10 @@ package nginx
 import "testing"
 
 func TestVerify(t *testing.T) {
-	var expected error = nil
+	var want error = nil
 
 	verify := Verify()
-	if verify == expected {
+	if verify == want {
 		t.Log("Error should be not nil")
 		t.Fail()
 	}

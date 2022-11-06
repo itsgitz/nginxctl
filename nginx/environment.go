@@ -7,6 +7,9 @@ const (
 	SitesAvailableDir string = "sites-available"
 	SitesEnabledDir   string = "sites-enabled"
 	ConfdDir          string = "conf.d"
+
+	StaticSite   string = "static_site"
+	ReverseProxy string = "reverse_proxy"
 )
 
 var (
