@@ -24,5 +24,8 @@ jobs:
     - name: Build
       run: go build -v ./...
 
-    - name: Test
-      run: go test -v ./...
+    - name: Test helper package
+      run: go test -v ./helper
+
+    - name: Test nginx package
+      run: go test -v ./nginx
