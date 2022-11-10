@@ -1,3 +1,5 @@
+![go pipeline test status](https://github.com/itsgitz/nginxctl/actions/workflows/go.yml/badge.svg)
+
 # Nginx Configuration Controller
 Easily manage or control nginx configurations with minimal effort. This project status is in progress.
 
